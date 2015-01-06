@@ -20,8 +20,7 @@ NGINX_IMAGE_NAME="registry-nginx"
 NGINX_CONTAINER_NAME="registry-nginx"
 NGINX_PATH_TO_DOCKERFILE="registry-nginx"
 
-PWD="$(pwd)"
-
+PWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ###########
 # Helpers #
@@ -36,13 +35,14 @@ echo_delimiter()
 help_commands()
 {
     echo "Please, specify command:"
-    echo "  help  -- view full help message"
-    echo "  build -- build docker images"
-    echo "  start -- run docker containers"
-    echo "  stop  -- stop docker containers"
-    echo "  logs  -- see docker registry logs"
-    echo "  rm    -- stop and remove docker containers"
-    echo "  rmi   -- remove docker images"
+    echo "  help   -- view full help message"
+    echo "  build  -- build docker images"
+    echo "  start  -- run docker containers"
+    echo "  stop   -- stop docker containers"
+    echo "  attach -- attach to docker registry"
+    echo "  logs   -- see docker registry logs"
+    echo "  rm     -- stop and remove docker containers"
+    echo "  rmi    -- remove docker images"
 }
 
 help_message()
@@ -118,7 +118,7 @@ redis_rmi()
 docker_build()
 {
     echo "Building Docker registry image...";
-    docker build -t="${DOCKER_IMAGE_NAME}" ${DOCKER_PATH_TO_DOCKERFILE};
+    docker build -t="${DOCKER_IMAGE_NAME}" ${PWD}/${DOCKER_PATH_TO_DOCKERFILE};
     echo_delimiter;
 }
 
@@ -145,8 +145,14 @@ docker_stop()
 
 docker_logs()
 {
-    echo "Attaching to Docker registry container..."
+    echo "Logging to Docker registry container..."
     docker logs -f ${DOCKER_CONTAINER_NAME};
+}
+
+docker_attach()
+{
+    echo "Attaching to Docker registry container..."
+    docker attach ${DOCKER_CONTAINER_NAME};
 }
 
 docker_rm()
@@ -170,7 +176,7 @@ docker_rmi()
 nginx_build()
 {
     echo "Building Nginx image...";
-    docker build -t="${NGINX_IMAGE_NAME}" ${NGINX_PATH_TO_DOCKERFILE};
+    docker build -t="${NGINX_IMAGE_NAME}" ${PWD}/${NGINX_PATH_TO_DOCKERFILE};
     echo_delimiter;
 }
 
@@ -211,6 +217,14 @@ nginx_rmi()
 ####################
 # Common functions #
 ####################
+
+all_start()
+{
+    echo "Starting containers..."
+    redis_start;
+    docker_start;
+    nginx_start;
+}
 
 all_stop()
 {
@@ -257,10 +271,7 @@ fi
 
 if [[ "$1" == "start" ]]
 then
-    echo "Starting containers..."
-    redis_start;
-    docker_start;
-    nginx_start;
+    all_start;
     exit 0;
 fi
 
@@ -276,17 +287,20 @@ then
     exit 0;
 fi
 
+if [[ "$1" == "attach" ]]
+then
+    docker_attach;
+    exit 0;
+fi
+
 if [[ "$1" == "rm" ]]
 then
-    all_stop;
     all_rm;
     exit 0;
 fi
 
 if [[ "$1" == "rmi" ]]
 then
-    all_stop;
-    all_rm;
     all_rmi;
     exit 0;
 fi
