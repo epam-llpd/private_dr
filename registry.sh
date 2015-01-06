@@ -13,7 +13,7 @@ DOCKER_IMAGE_NAME="registry-docker"
 DOCKER_CONTAINER_NAME="registry-docker"
 DOCKER_PATH_TO_DOCKERFILE="registry-docker"
 DOCKER_DATA_DIR="data"
-DOCKER_CONF_DIR="registry-docker/conf"
+DOCKER_CONF_DIR="conf"
 DOCKER_DB_DIR="db"
 
 NGINX_IMAGE_NAME="registry-nginx"
@@ -211,6 +211,14 @@ nginx_rmi()
 # Common functions #
 ####################
 
+all_start()
+{
+    echo "Starting containers..."
+    redis_start;
+    docker_start;
+    nginx_start;
+}
+
 all_stop()
 {
     echo "Stopping containers..."
@@ -256,10 +264,7 @@ fi
 
 if [[ "$1" == "start" ]]
 then
-    echo "Starting containers..."
-    redis_start;
-    docker_start;
-    nginx_start;
+    all_start;
     exit 0;
 fi
 
@@ -277,15 +282,12 @@ fi
 
 if [[ "$1" == "rm" ]]
 then
-    all_stop;
     all_rm;
     exit 0;
 fi
 
 if [[ "$1" == "rmi" ]]
 then
-    all_stop;
-    all_rm;
     all_rmi;
     exit 0;
 fi
