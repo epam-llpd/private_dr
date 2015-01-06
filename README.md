@@ -1,4 +1,14 @@
-private_dr
-==========
+# Private Docker registry
 
-Script and bunch of docker files for private docker registry creation.
+This repository contains bunch of Dockerfiles and shell script to
+create secure and persistent for private docker registry.
+
+## Usage
+
+Simple clone this repository and run registry.sh script:
+```bash
+
+```
+
+
+
