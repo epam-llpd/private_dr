@@ -20,8 +20,7 @@ NGINX_IMAGE_NAME="registry-nginx"
 NGINX_CONTAINER_NAME="registry-nginx"
 NGINX_PATH_TO_DOCKERFILE="registry-nginx"
 
-PWD="$(pwd)"
-
+PWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ###########
 # Helpers #
