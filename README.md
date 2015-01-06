@@ -8,7 +8,7 @@ create secure and persistent for private docker registry.
 To use it, simple clone this repository and run registry.sh script:
 ```bash
 ./registry.sh build
-./registry.sh start
+./registry.sh run 
 ```
 
 Private registry should be serving on the 8080 port.

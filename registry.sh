@@ -37,7 +37,7 @@ help_commands()
     echo "Please, specify command:"
     echo "  help   -- view full help message"
     echo "  build  -- build docker images"
-    echo "  start  -- run docker containers"
+    echo "  run    -- run docker containers"
     echo "  stop   -- stop docker containers"
     echo "  attach -- attach to docker registry"
     echo "  logs   -- see docker registry logs"
@@ -53,7 +53,7 @@ help_message()
     echo "Use this script to build and deploy secure and persistent"
     echo "private Docker registry:"
     echo "  $0 build -- build docker containers for Redis, Docker and Nginx"
-    echo "  $0 start -- start registry"
+    echo "  $0 run   -- run registry"
     echo
     echo "Docker images, served by registry, stored in data/ directory."
     echo "Docker system database, used for indexing, stored in db/ directory."
@@ -83,7 +83,7 @@ redis_pull()
     echo_delimiter;
 }
 
-redis_start()
+redis_run()
 {
     echo "Starting Redis container...";
     docker run -d --name ${REDIS_CONTAINER_NAME} redis;
@@ -122,7 +122,7 @@ docker_build()
     echo_delimiter;
 }
 
-docker_start()
+docker_run()
 {
     echo "Starting Docker registry container...";
     docker run \
@@ -180,7 +180,7 @@ nginx_build()
     echo_delimiter;
 }
 
-nginx_start()
+nginx_run()
 {
     echo "Starting nginx container...";
     docker run \
@@ -218,12 +218,12 @@ nginx_rmi()
 # Common functions #
 ####################
 
-all_start()
+all_run()
 {
     echo "Starting containers..."
-    redis_start;
-    docker_start;
-    nginx_start;
+    redis_run;
+    docker_run;
+    nginx_run;
 }
 
 all_stop()
@@ -269,9 +269,9 @@ then
     exit 0;
 fi
 
-if [[ "$1" == "start" ]]
+if [[ "$1" == "run" ]]
 then
-    all_start;
+    all_run;
     exit 0;
 fi
 
