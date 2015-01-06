@@ -35,13 +35,14 @@ echo_delimiter()
 help_commands()
 {
     echo "Please, specify command:"
-    echo "  help  -- view full help message"
-    echo "  build -- build docker images"
-    echo "  start -- run docker containers"
-    echo "  stop  -- stop docker containers"
-    echo "  logs  -- see docker registry logs"
-    echo "  rm    -- stop and remove docker containers"
-    echo "  rmi   -- remove docker images"
+    echo "  help   -- view full help message"
+    echo "  build  -- build docker images"
+    echo "  start  -- run docker containers"
+    echo "  stop   -- stop docker containers"
+    echo "  attach -- attach to docker registry"
+    echo "  logs   -- see docker registry logs"
+    echo "  rm     -- stop and remove docker containers"
+    echo "  rmi    -- remove docker images"
 }
 
 help_message()
@@ -144,8 +145,14 @@ docker_stop()
 
 docker_logs()
 {
-    echo "Attaching to Docker registry container..."
+    echo "Logging to Docker registry container..."
     docker logs -f ${DOCKER_CONTAINER_NAME};
+}
+
+docker_attach()
+{
+    echo "Attaching to Docker registry container..."
+    docker attach ${DOCKER_CONTAINER_NAME};
 }
 
 docker_rm()
@@ -277,6 +284,12 @@ fi
 if [[ "$1" == "logs" ]]
 then
     docker_logs;
+    exit 0;
+fi
+
+if [[ "$1" == "attach" ]]
+then
+    docker_attach;
     exit 0;
 fi
 
