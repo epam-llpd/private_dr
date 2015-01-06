@@ -117,7 +117,7 @@ redis_rmi()
 docker_build()
 {
     echo "Building Docker registry image...";
-    docker build -t="${DOCKER_IMAGE_NAME}" ${DOCKER_PATH_TO_DOCKERFILE};
+    docker build -t="${DOCKER_IMAGE_NAME}" ${PWD}/${DOCKER_PATH_TO_DOCKERFILE};
     echo_delimiter;
 }
 
@@ -169,7 +169,7 @@ docker_rmi()
 nginx_build()
 {
     echo "Building Nginx image...";
-    docker build -t="${NGINX_IMAGE_NAME}" ${NGINX_PATH_TO_DOCKERFILE};
+    docker build -t="${NGINX_IMAGE_NAME}" ${PWD}/${NGINX_PATH_TO_DOCKERFILE};
     echo_delimiter;
 }
 
