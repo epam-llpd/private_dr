@@ -1,0 +1,36 @@
+upstream registry-docker {
+    server registry-docker:5000;
+}
+
+server {
+    listen 8080;
+    server_name privare_registry;
+
+    ssl on;
+    ssl_certificate /etc/nginx/ssl/registry-docker.crt;
+    ssl_certificate_key /etc/nginx/ssl/registry-docker.key;
+
+    proxy_set_header Host             $http_host;
+    proxy_set_header X-Real-IP        $remote_addr;
+
+    client_max_body_size 0;
+
+    chunked_transfer_encoding on;
+
+    location / {
+        # auth_basic              "Restricted";
+        # auth_basic_user_file    /etc/nginx/registry-docker.htpasswd;
+
+        proxy_pass http://registry-docker;
+    }
+
+    location /_ping {
+        # auth_basic off;
+	proxy_pass http://registry-docker;
+    }
+
+    location /v1/_ping {
+        # auth_basic off;
+	proxy_pass http://registry-docker;
+    }
+}
