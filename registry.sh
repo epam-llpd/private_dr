@@ -39,7 +39,7 @@ help_commands()
     echo "  build -- build docker containers"
     echo "  start -- run docker containers"
     echo "  stop  -- stop docker containers"
-    echo "  rm    -- remove docker containers"
+    echo "  clean -- remove docker containers"
 }
 
 help_message()
@@ -48,6 +48,15 @@ help_message()
     echo "private Docker registry:"
     echo "  $0 build"
     echo "  $0 start"
+    echo
+    echo "To use your own ssl keys, simple replace ssl/registry-docker.crt,"
+    echo "ssl/registry-docker.key with your signed keys."
+    echo
+    echo "After that you should add certificate authority to system certificates"    
+    echo "ON ALL MACHINES, which will use your private repo."
+    echo
+    echo "To do this, echo copy ssl/CA.crt to /etc/ssl/certs/registry-docker.crt,"
+    echo "then run sudo update-ca-certificates and restart docker."
 }
 
 ###################
@@ -114,6 +123,12 @@ docker_stop()
     echo_delimiter;
 }
 
+docker_logs()
+{
+    echo "Attaching to Docker registry container..."
+    docker logs -f ${DOCKER_CONTAINER_NAME};
+}
+
 docker_rm()
 {
     echo "Removing Docker registry container...";
@@ -159,9 +174,28 @@ nginx_rm()
     echo_delimiter;
 }
 
+####################
+# Common functions #
+####################
+
+all_stop()
+{
+    echo "Stopping containers..."
+    nginx_stop;
+    docker_stop;
+    redis_stop;    
+}
+
+all_rm()
+{
+    echo "Removing containers..."
+    nginx_rm;
+    docker_rm;
+    redis_rm;
+}
 
 ###############
-# script body #
+# Script body #
 ###############
 
 if [[ "$1" == "help" ]]
@@ -190,19 +224,20 @@ fi
 
 if [[ "$1" == "stop" ]]
 then
-    echo "Stopping containers..."
-    nginx_stop;
-    docker_stop;
-    redis_stop;
+    all_stop;
     exit 0;
 fi
 
-if [[ "$1" == "rm" ]]
+if [[ "$1" == "logs" ]]
 then
-    echo "Removing containers..."
-    nginx_rm;
-    docker_rm;
-    redis_rm;
+    docker_logs;
+    exit 0;
+fi
+
+if [[ "$1" == "clean" ]]
+then
+    all_stop;
+    all_rm;
     exit 0;
 fi
 
