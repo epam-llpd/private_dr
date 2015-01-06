@@ -1,1 +1,4 @@
 *.swp
+data/images
+data/repositories
+db/reg.db

@@ -4,7 +4,7 @@ upstream registry-docker {
 
 server {
     listen 8080;
-    server_name privare_registry;
+    server_name _;
 
     ssl on;
     ssl_certificate /etc/nginx/ssl/registry-docker.crt;

@@ -6,14 +6,15 @@ REGISTRY_PORT="8080"
 # System variables #
 ####################
 
+REDIS_IMAGE_NAME="redis"
 REDIS_CONTAINER_NAME="registry-redis"
 
 DOCKER_IMAGE_NAME="registry-docker"
 DOCKER_CONTAINER_NAME="registry-docker"
 DOCKER_PATH_TO_DOCKERFILE="registry-docker"
-DOCKER_DATA_DIR="registry-docker/data"
+DOCKER_DATA_DIR="data"
 DOCKER_CONF_DIR="registry-docker/conf"
-DOCKER_DB_DIR="registry-docker/sqlitedb"
+DOCKER_DB_DIR="db"
 
 NGINX_IMAGE_NAME="registry-nginx"
 NGINX_CONTAINER_NAME="registry-nginx"
@@ -36,27 +37,39 @@ help_commands()
 {
     echo "Please, specify command:"
     echo "  help  -- view full help message"
-    echo "  build -- build docker containers"
+    echo "  build -- build docker images"
     echo "  start -- run docker containers"
     echo "  stop  -- stop docker containers"
-    echo "  clean -- remove docker containers"
+    echo "  logs  -- see docker registry logs"
+    echo "  rm    -- stop and remove docker containers"
+    echo "  rmi   -- remove docker images"
 }
 
 help_message()
 {
+    echo "#########"
+    echo "# Usage #"
+    echo "#########"
     echo "Use this script to build and deploy secure and persistent"
     echo "private Docker registry:"
-    echo "  $0 build"
-    echo "  $0 start"
+    echo "  $0 build -- build docker containers for Redis, Docker and Nginx"
+    echo "  $0 start -- start registry"
     echo
+    echo "Docker images, served by registry, stored in data/ directory."
+    echo "Docker system database, used for indexing, stored in db/ directory."
+    echo
+    echo "################"
+    echo "# Certificates #"
+    echo "################"
     echo "To use your own ssl keys, simple replace ssl/registry-docker.crt,"
     echo "ssl/registry-docker.key with your signed keys."
     echo
     echo "After that you should add certificate authority to system certificates"    
     echo "ON ALL MACHINES, which will use your private repo."
     echo
-    echo "To do this, echo copy ssl/CA.crt to /etc/ssl/certs/registry-docker.crt,"
-    echo "then run sudo update-ca-certificates and restart docker."
+    echo "To do this, copy ssl/CA.crt or your own certificate to"
+    echo "/etc/ssl/certs/registry-docker.crt, then run sudo update-ca-certificates" 
+    echo "and restart docker."
 }
 
 ###################
@@ -91,13 +104,20 @@ redis_rm()
     echo_delimiter;
 }
 
+redis_rmi()
+{
+    echo "Removing Redis image...";
+    docker rmi ${REDIS_IMAGE_NAME};
+    echo_delimiter;
+}
+
 ####################
 # Docker utilities #
 ####################
 
 docker_build()
 {
-    echo "Building Docker registry...";
+    echo "Building Docker registry image...";
     docker build -t="${DOCKER_IMAGE_NAME}" ${DOCKER_PATH_TO_DOCKERFILE};
     echo_delimiter;
 }
@@ -136,13 +156,20 @@ docker_rm()
     echo_delimiter;
 }
 
+docker_rmi()
+{
+    echo "Removing Docker registry image...";
+    docker rmi ${DOCKER_IMAGE_NAME};
+    echo_delimiter;
+}
+
 ###################
 # Nginx utilities #
 ###################
 
 nginx_build()
 {
-    echo "Building Nginx container...";
+    echo "Building Nginx image...";
     docker build -t="${NGINX_IMAGE_NAME}" ${NGINX_PATH_TO_DOCKERFILE};
     echo_delimiter;
 }
@@ -174,6 +201,13 @@ nginx_rm()
     echo_delimiter;
 }
 
+nginx_rmi()
+{
+    echo "Removing nginx image...";
+    docker rmi ${NGINX_IMAGE_NAME};
+    echo_delimiter;
+}
+
 ####################
 # Common functions #
 ####################
@@ -192,6 +226,14 @@ all_rm()
     nginx_rm;
     docker_rm;
     redis_rm;
+}
+
+all_rmi()
+{
+    echo "Removing images..."
+    nginx_rmi;
+    docker_rmi;
+    redis_rmi;
 }
 
 ###############
@@ -234,13 +276,20 @@ then
     exit 0;
 fi
 
-if [[ "$1" == "clean" ]]
+if [[ "$1" == "rm" ]]
 then
     all_stop;
     all_rm;
     exit 0;
 fi
 
+if [[ "$1" == "rmi" ]]
+then
+    all_stop;
+    all_rm;
+    all_rmi;
+    exit 0;
+fi
 
 ###################
 # Unknown command #
