@@ -11,7 +11,7 @@ To use it, simple clone this repository and run registry.sh script:
 ./registry.sh start
 ```
 
-Private registry should be serving on the 8080 port.
+Private registry should be listening on the 8080 port.
 
 ## Custom ssl keys
 
