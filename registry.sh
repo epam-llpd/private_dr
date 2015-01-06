@@ -13,7 +13,7 @@ DOCKER_IMAGE_NAME="registry-docker"
 DOCKER_CONTAINER_NAME="registry-docker"
 DOCKER_PATH_TO_DOCKERFILE="registry-docker"
 DOCKER_DATA_DIR="data"
-DOCKER_CONF_DIR="conf"
+DOCKER_CONF_DIR="registry-docker/conf"
 DOCKER_DB_DIR="db"
 
 NGINX_IMAGE_NAME="registry-nginx"
