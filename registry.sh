@@ -36,14 +36,14 @@ help_commands()
 {
     cat << EOF
 Please, specify command:
-  help   -- view full help message
-  build  -- build docker images
-  run    -- run docker containers
-  stop   -- stop docker containers
-  attach -- attach to docker registry
-  logs   -- see docker registry logs
-  rm     -- stop and remove docker containers
-  rmi    -- remove docker images
+  help       -- view full help message
+  build      -- build registry images form Dockerfiles
+  run [PORT] -- run registry listening on PORT (8080 by default)
+  stop       -- stop registry
+  attach     -- attach to registry
+  logs       -- see registry logs
+  rm         -- remove registry containers
+  rmi        -- remove registry images
 EOF
 }
 
@@ -56,8 +56,8 @@ help_message()
 Use this script to build and deploy secure and persistent
 private Docker registry:
 
-  $0 build -- build docker containers for Redis, Docker and Nginx
-  $0 run   -- run registry on 8080 prot
+  $0 build      -- build docker containers for Redis, Docker and Nginx
+  $0 run [PORT] -- run registry on PORT (8080 by default)
 
 After starting registry, you should assign symbolic name to 
 ip address of machine, which runs it, for example, by editing
@@ -200,13 +200,13 @@ nginx_build()
 
 nginx_run()
 {
-    echo "Starting nginx container...";
+    echo "Starting nginx container listening on port ${REGISTRY_PORT}...";
     docker run \
     -d \
     --name ${NGINX_CONTAINER_NAME} \
     --link ${DOCKER_CONTAINER_NAME}:registry-docker \
     -v ${PWD}/ssl:/etc/nginx/ssl \
-    -p 8080:${REGISTRY_PORT} \
+    -p ${REGISTRY_PORT}:8080 \
     ${NGINX_IMAGE_NAME};
     echo_delimiter;
 }
@@ -289,6 +289,10 @@ fi
 
 if [[ "$1" == "run" ]]
 then
+    if [[ "$2" -gt "0" ]] && [[ "$2" -lt "65535" ]]
+    then
+	let REGISTRY_PORT="$2"
+    fi
     all_run;
     exit 0;
 fi

@@ -7,8 +7,8 @@ create secure and persistent for private docker registry.
 
 To use it, simple clone this repository and run registry.sh script:
 ```bash
-./registry.sh build # build docker containers for Redis, Docker and Nginx
-./registry.sh run   # run registry on 8080 port
+./registry.sh build       # build docker containers for Redis, Docker and Nginx
+./registry.sh run [PORT]  # run registry on PORT (8080 by default)
 ```
 
 After starting registry, you should assign symbolic name to
