@@ -55,6 +55,7 @@ help_message()
 #########
 Use this script to build and deploy secure and persistent
 private Docker registry:
+
   $0 build -- build docker containers for Redis, Docker and Nginx
   $0 run   -- run registry on 8080 prot
 
@@ -68,7 +69,7 @@ Default value is: private_registry.
 After that, you should be able to work with your registry:
 search, push and pull images. For example:
 
-  docker search private_registry:8080/some_containter
+  docker search private_registry:8080/some_container
   docker pull private_registry:8080/another_container
 
 Docker images, served by registry, stored in data/ directory.

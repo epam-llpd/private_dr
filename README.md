@@ -22,8 +22,8 @@ After that, you should be able to work with your registry:
 search, push and pull images. For example:
 
 ```bash
-  docker search private_registry:8080/some_containter
-  docker pull private_registry:8080/another_container
+docker search private_registry:8080/some_container
+docker pull private_registry:8080/another_container
 ```
 
 Docker images, served by registry, stored in data/ directory.
