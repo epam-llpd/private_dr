@@ -34,42 +34,59 @@ echo_delimiter()
 
 help_commands()
 {
-    echo "Please, specify command:"
-    echo "  help   -- view full help message"
-    echo "  build  -- build docker images"
-    echo "  run    -- run docker containers"
-    echo "  stop   -- stop docker containers"
-    echo "  attach -- attach to docker registry"
-    echo "  logs   -- see docker registry logs"
-    echo "  rm     -- stop and remove docker containers"
-    echo "  rmi    -- remove docker images"
+    cat << EOF
+Please, specify command:
+  help   -- view full help message
+  build  -- build docker images
+  run    -- run docker containers
+  stop   -- stop docker containers
+  attach -- attach to docker registry
+  logs   -- see docker registry logs
+  rm     -- stop and remove docker containers
+  rmi    -- remove docker images
+EOF
 }
 
 help_message()
 {
-    echo "#########"
-    echo "# Usage #"
-    echo "#########"
-    echo "Use this script to build and deploy secure and persistent"
-    echo "private Docker registry:"
-    echo "  $0 build -- build docker containers for Redis, Docker and Nginx"
-    echo "  $0 run   -- run registry"
-    echo
-    echo "Docker images, served by registry, stored in data/ directory."
-    echo "Docker system database, used for indexing, stored in db/ directory."
-    echo
-    echo "################"
-    echo "# Certificates #"
-    echo "################"
-    echo "To use your own ssl keys, simple replace ssl/registry-docker.crt,"
-    echo "ssl/registry-docker.key with your signed keys."
-    echo
-    echo "After that you should add certificate authority to system certificates"    
-    echo "ON ALL MACHINES, which will use your private repo."
-    echo
-    echo "To do this, copy ssl/CA.crt or your own certificate to"
-    echo "/etc/ssl/certs/registry-docker.crt, then run sudo update-ca-certificates" 
-    echo "and restart docker."
+    cat << EOF
+#########
+# Usage #
+#########
+Use this script to build and deploy secure and persistent
+private Docker registry:
+  $0 build -- build docker containers for Redis, Docker and Nginx
+  $0 run   -- run registry on 8080 prot
+
+After starting registry, you should assign symbolic name to 
+ip address of machine, which runs it, for example, by editing
+/etc/hosts of client machines, or setup appropriate DNS records.
+
+This name should match with symbolic name, stored in ssl certificate.
+Default value is: private_registry. 
+
+After that, you should be able to work with your registry:
+search, push and pull images. For example:
+
+  docker search private_registry:8080/some_containter
+  docker pull private_registry:8080/another_container
+
+Docker images, served by registry, stored in data/ directory.
+Docker system database, used for indexing, stored in db/ directory.
+
+################
+# Certificates #
+################
+To use your own ssl keys, replace ssl/registry-docker.crt,
+ssl/registry-docker.key with your signed by CA keys.
+
+After that you should add certificate authority to system certificates    
+ON ALL MACHINES, which will use your private repo.
+
+To do this, copy ssl/CA.crt or your own certificate to
+/etc/ssl/certs/registry-docker.crt, then run sudo update-ca-certificates 
+and restart docker.
+EOF
 }
 
 ###################
